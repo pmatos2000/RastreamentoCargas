@@ -15,7 +15,6 @@ namespace RastreamentoCargas.Application.DTOs.Operators
 
         public static explicit operator OperatorResponseDto(Operator op)
         {
-            // A mesma lógica do seu método
             return new OperatorResponseDto
             {
                 Id = op.Id,
