@@ -51,7 +51,7 @@ namespace RastreamentoCargas.Infrastructure.Migrations
                         user.UserName.ToUpper(), user.Email, user.Email.ToUpper(), true,
                         passwordHash, Guid.NewGuid().ToString("D"), false,
                         false, false, 0,
-                        user.Department, user.EmployeeId, "Operator", DBNull.Value, DBNull.Value
+                        user.Department, user.EmployeeId, "Operator", null, DBNull.Value
                     ]
                 );
             }
