@@ -7,14 +7,14 @@ namespace RastreamentoCargas.Application.DTOs.Operators
     {
 
         [Required]
-        [MaxLength(SchemaDefinition.User.UserNameLength)]
+        [MaxLength(SchemaDefinition.NameDefaultLength)]
         public required string UserName { get; init; }
         
         [EmailAddress]
         public string? Email { get; init; }
 
         [Required]
-        [MaxLength(SchemaDefinition.User.UserNameLength)]
+        [MaxLength(SchemaDefinition.NameDefaultLength)]
         public required string FullName { get; init; }
 
         [Required]

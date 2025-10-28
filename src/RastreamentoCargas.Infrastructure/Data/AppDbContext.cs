@@ -23,7 +23,8 @@ namespace RastreamentoCargas.Infrastructure.Data
 
         private const string CREATED_BY_SYSTEM = "System";
 
-        public DbSet<Operator> Operators { get; set; } = default!;
+        public DbSet<Operator> Operators { get; set; } = null!;
+        public DbSet<Client> Clients { get; set; } = null!;
 
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
@@ -102,11 +103,11 @@ namespace RastreamentoCargas.Infrastructure.Data
                 {
                     builder.Entity(entityType.ClrType)
                            .Property(nameof(IAuditable.CreatedBy))
-                           .HasMaxLength(SchemaDefinition.User.UserNameLength);
+                           .HasMaxLength(SchemaDefinition.NameDefaultLength);
 
                     builder.Entity(entityType.ClrType)
                            .Property(nameof(IAuditable.UpdatedBy))
-                           .HasMaxLength(SchemaDefinition.User.UserNameLength);
+                           .HasMaxLength(SchemaDefinition.NameDefaultLength);
                 }
             }
         }
