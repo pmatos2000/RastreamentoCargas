@@ -9,6 +9,7 @@ namespace RastreamentoCargas.API.Extensions
         {
 
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IOperatorService, OperatorService>();
 
             return services;
         }

@@ -15,7 +15,7 @@ namespace RastreamentoCargas.Infrastructure.Data
 
         private const string CREATED_BY_SYSTEM = "System";
 
-        public DbSet<Operator> Operators = null!;
+        public DbSet<Operator> Operators { get; set; } = default!;
 
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
