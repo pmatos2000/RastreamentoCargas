@@ -20,7 +20,7 @@ namespace RastreamentoCargas.API.Extensions
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Description = "Autenticação JWT (Bearer). Digite 'Bearer' [espaço] e o seu token.",
+                    Description = "Autenticação JWT (Bearer). Digite o seu token.",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http, 
                     Scheme = "bearer",
