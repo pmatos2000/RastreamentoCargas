@@ -10,10 +10,10 @@ namespace RastreamentoCargas.Infrastructure.Data
     public class AppDbContext : IdentityDbContext<User>
     {
         
-
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private const string CREATED_BY_SYSTEM = "System";
+        private const int MAX_USERNAME_LENGTH = 100;
 
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
@@ -55,17 +55,24 @@ namespace RastreamentoCargas.Infrastructure.Data
 
             builder.Entity<User>().HasData(rootUser);
 
-            var entityTypes = builder.Model.GetEntityTypes();
-
-            var baseEntityTypes = entityTypes.Where(t =>
-                t.ClrType != null &&
-                typeof(BaseEntity).IsAssignableFrom(t.ClrType));
-
-            foreach (var entityType in baseEntityTypes)
+            foreach (var entityType in builder.Model.GetEntityTypes())
             {
-                builder.Entity(entityType.ClrType)
-                    .HasIndex(nameof(BaseEntity.ExternalId))
-                    .IsUnique();
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    builder.Entity(entityType.ClrType)
+                        .HasIndex(nameof(BaseEntity.ExternalId))
+                        .IsUnique();
+                }
+                if (typeof(IAuditable).IsAssignableFrom(entityType.ClrType))
+                {
+                    builder.Entity(entityType.ClrType)
+                        .Property(nameof(IAuditable.CreatedBy))
+                        .HasMaxLength(MAX_USERNAME_LENGTH);
+
+                    builder.Entity(entityType.ClrType)
+                        .Property(nameof(IAuditable.UpdatedBy))
+                        .HasMaxLength(MAX_USERNAME_LENGTH);
+                }
             }
         }
 
@@ -92,6 +99,4 @@ namespace RastreamentoCargas.Infrastructure.Data
             }
         }
     }
-
-
 }
