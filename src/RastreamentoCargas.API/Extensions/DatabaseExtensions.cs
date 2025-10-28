@@ -16,7 +16,7 @@ namespace RastreamentoCargas.API.Extensions
                 options.UseSqlServer(connectionString));
 
 
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<User, IdentityRole<long>>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
