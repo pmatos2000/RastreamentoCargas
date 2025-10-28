@@ -34,8 +34,7 @@ namespace RastreamentoCargas.Infrastructure.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            ApplyAutomaticConfigurations(builder);
-            SeedRootUser(builder);
+            ApplyAutomaticConfigurations(builder);;
         }
 
         /// <summary>
@@ -99,32 +98,5 @@ namespace RastreamentoCargas.Infrastructure.Data
             }
         }
 
-        /// <summary>
-        /// Adiciona o usuário 'root' (Administrador) ao banco de dados
-        /// através do mecanismo de Seeding da Migração.
-        /// </summary>
-        private void SeedRootUser(ModelBuilder builder)
-        {
-            var passwordHasher = new PasswordHasher<User>();
-
-            var rootUser = new User
-            {
-                Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
-                UserName = "root",
-                NormalizedUserName = "ROOT",
-                Email = "root@sistema.com",
-                NormalizedEmail = "ROOT@SISTEMA.COM",
-                EmailConfirmed = true,
-                FullName = "Administrador Raiz",
-                IsActive = true,
-                SecurityStamp = Guid.NewGuid().ToString("D"),
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = CREATED_BY_SYSTEM,
-            };
-
-            rootUser.PasswordHash = passwordHasher.HashPassword(rootUser, "Teste123.");
-
-            builder.Entity<User>().HasData(rootUser);
-        }
     }
 }
