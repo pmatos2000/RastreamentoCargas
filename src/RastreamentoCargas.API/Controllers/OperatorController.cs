@@ -38,9 +38,6 @@ namespace RastreamentoCargas.API.Controllers
             return Ok(operador);
         }
 
-        /*
-
-        // POST: api/operadores
         [HttpPost]
         [ProducesResponseType(typeof(OperatorResponseDto), 201)]
         [ProducesResponseType(400)]
@@ -48,16 +45,17 @@ namespace RastreamentoCargas.API.Controllers
         {
             try
             {
-                var novoOperador = await _operatorService.CreateAsync(dto);
-                // Retorna 201 Created com a rota para buscar o novo recurso
-                return CreatedAtAction(nameof(GetOperador), new { id = novoOperador.Id }, novoOperador);
+                var novoOperator = await _operatorService.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetOperator), new { id = novoOperator.Id }, novoOperator);
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message); // Ex: "Username já existe"
+                return BadRequest(ex.Message);
             }
         }
 
+        /*
+         * 
         // PUT: api/operadores/{id}
         [HttpPut("{id}")]
         [ProducesResponseType(204)] // 204 No Content (sucesso, sem corpo)

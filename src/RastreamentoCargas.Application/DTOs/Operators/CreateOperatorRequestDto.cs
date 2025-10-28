@@ -18,7 +18,8 @@ namespace RastreamentoCargas.Application.DTOs.Operators
         public required string FullName { get; init; }
 
         [Required]
-        [MinLength(6)]
+        [MinLength(SchemaDefinition.User.PasswordMinLength)]
+        [MaxLength(SchemaDefinition.User.PasswordMaxLength)]
         public required string Password { get; init; }
 
         [Required]
