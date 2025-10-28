@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RastreamentoCargas.Domain.Common;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Interfaces.Common;
+using System.Reflection;
 
 namespace RastreamentoCargas.Infrastructure.Data
 {
@@ -13,7 +14,6 @@ namespace RastreamentoCargas.Infrastructure.Data
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private const string CREATED_BY_SYSTEM = "System";
-        private const int MAX_USERNAME_LENGTH = 100;
 
         public DbSet<Operator> Operators = null!;
 
@@ -33,6 +33,7 @@ namespace RastreamentoCargas.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             ApplyAutomaticConfigurations(builder);
             SeedRootUser(builder);
         }
@@ -89,11 +90,11 @@ namespace RastreamentoCargas.Infrastructure.Data
                 {
                     builder.Entity(entityType.ClrType)
                            .Property(nameof(IAuditable.CreatedBy))
-                           .HasMaxLength(MAX_USERNAME_LENGTH);
+                           .HasMaxLength(SchemaDefinition.User.UserNameLength);
 
                     builder.Entity(entityType.ClrType)
                            .Property(nameof(IAuditable.UpdatedBy))
-                           .HasMaxLength(MAX_USERNAME_LENGTH);
+                           .HasMaxLength(SchemaDefinition.User.UserNameLength);
                 }
             }
         }
