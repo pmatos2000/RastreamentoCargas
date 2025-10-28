@@ -1,4 +1,21 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RastreamentoCargas.Domain.Entities;
+using RastreamentoCargas.Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpContextAccessor();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services
+    .AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders(); 
 
 builder.Services.AddControllers();
 
