@@ -54,6 +54,19 @@ namespace RastreamentoCargas.Infrastructure.Data
             rootUser.PasswordHash = passwordHasher.HashPassword(rootUser, "Teste123.");
 
             builder.Entity<User>().HasData(rootUser);
+
+            var entityTypes = builder.Model.GetEntityTypes();
+
+            var baseEntityTypes = entityTypes.Where(t =>
+                t.ClrType != null &&
+                typeof(BaseEntity).IsAssignableFrom(t.ClrType));
+
+            foreach (var entityType in baseEntityTypes)
+            {
+                builder.Entity(entityType.ClrType)
+                    .HasIndex(nameof(BaseEntity.ExternalId))
+                    .IsUnique();
+            }
         }
 
         private void SetAuditProperties()
