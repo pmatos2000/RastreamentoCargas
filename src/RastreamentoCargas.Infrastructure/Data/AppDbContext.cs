@@ -53,24 +53,32 @@ namespace RastreamentoCargas.Infrastructure.Data
         {
             var userLoggedIn = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? CREATED_BY_SYSTEM;
 
-            var entries = ChangeTracker.Entries<IAuditable>();
+            var entries = ChangeTracker.Entries<IBaseEntity>();
 
             foreach (var entry in entries)
             {
+                var auditableEntity = entry.Entity as IAuditable;
+
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedAt = DateTime.UtcNow;
-                    entry.Entity.CreatedBy = userLoggedIn;
-                    entry.Entity.UpdatedAt = null;
-                    entry.Entity.UpdatedBy = null;
-                    entry.Entity.IsActive = true;
                     entry.Entity.ExternalId = Guid.NewGuid();
-                    
+
+                    if (auditableEntity is not null)
+                    {
+                        auditableEntity.CreatedAt = DateTime.UtcNow;
+                        auditableEntity.CreatedBy = userLoggedIn;
+                        auditableEntity.UpdatedAt = null;
+                        auditableEntity.UpdatedBy = null;
+                        auditableEntity.IsActive = true;
+                    }
                 }
                 else if (entry.State == EntityState.Modified)
                 {
-                    entry.Entity.UpdatedAt = DateTime.UtcNow;
-                    entry.Entity.UpdatedBy = userLoggedIn;
+                    if (auditableEntity is not null)
+                    {
+                        auditableEntity.UpdatedAt = DateTime.UtcNow;
+                        auditableEntity.UpdatedBy = userLoggedIn;
+                    }
                 }
             }
         }
