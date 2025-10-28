@@ -17,7 +17,6 @@ namespace RastreamentoCargas.API.Controllers
             _operatorService = operatorService;
         }
 
-        // GET: api/operadores
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<OperatorResponseDto>), 200)]
         public async Task<IActionResult> GetOperators()
@@ -26,21 +25,20 @@ namespace RastreamentoCargas.API.Controllers
             return Ok(operadores);
         }
 
-        /*
-
-        // GET: api/operadores/{id}
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(OperatorResponseDto), 200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetOperador(string id)
+        public async Task<IActionResult> GetOperator(Guid id)
         {
-            var operador = await _operatorService.GetByIdAsync(id);
+            var operador = await _operatorService.GetOperator(id);
             if (operador == null)
             {
                 return NotFound("Operador não encontrado.");
             }
             return Ok(operador);
         }
+
+        /*
 
         // POST: api/operadores
         [HttpPost]
