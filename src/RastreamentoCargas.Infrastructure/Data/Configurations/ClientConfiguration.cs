@@ -10,6 +10,9 @@ namespace RastreamentoCargas.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Client> builder)
         {
+            builder.Property(o => o.Name)
+                .HasMaxLength(SchemaDefinition.NameDefaultLength);
+
             builder.Property(o => o.Document)
                 .HasMaxLength(SchemaDefinition.DoumentDefaultLength);
 
