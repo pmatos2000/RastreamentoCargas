@@ -18,12 +18,10 @@ namespace RastreamentoCargas.Infrastructure.Services
             return operators.Select(o => (OperatorResponseDto) o);
         }
 
-        public async Task<OperatorResponseDto?> GetOperator(Guid id)
+        public async Task<OperatorResponseDto?> GetOperator(long id)
         {
-            var idString = id.ToString();
-
             var operatorEntity = await context.Operators
-                .FirstOrDefaultAsync(o => o.Id == idString && o.IsActive);
+                .FirstOrDefaultAsync(o => o.Id == id && o.IsActive);
 
             if (operatorEntity is null) return null;
 

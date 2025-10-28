@@ -9,7 +9,15 @@ using System.Reflection;
 
 namespace RastreamentoCargas.Infrastructure.Data
 {
-    public sealed class AppDbContext : IdentityDbContext<User>
+    public sealed class AppDbContext : IdentityDbContext<
+        User,
+        IdentityRole<long>,
+        long,
+        IdentityUserClaim<long>,
+        IdentityUserRole<long>,
+        IdentityUserLogin<long>,
+        IdentityRoleClaim<long>,
+        IdentityUserToken<long>>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -56,11 +64,8 @@ namespace RastreamentoCargas.Infrastructure.Data
                     entry.Entity.UpdatedAt = null;
                     entry.Entity.UpdatedBy = null;
                     entry.Entity.IsActive = true;
-
-                    if (entry.Entity is BaseEntity baseEntity)
-                    {
-                        baseEntity.ExternalId = Guid.NewGuid();
-                    }
+                    entry.Entity.ExternalId = Guid.NewGuid();
+                    
                 }
                 else if (entry.State == EntityState.Modified)
                 {

@@ -4,7 +4,7 @@ namespace RastreamentoCargas.Application.DTOs.Operators
 {
     public record OperatorResponseDto
     {
-        public required string Id { get; init; }
+        public required long Id { get; init; }
         public required string UserName { get; init; }
         public string? Email { get; init; }
         public required string FullName { get; init; }

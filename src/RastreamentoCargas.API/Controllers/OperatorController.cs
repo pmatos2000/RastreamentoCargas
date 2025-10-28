@@ -28,7 +28,7 @@ namespace RastreamentoCargas.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(OperatorResponseDto), 200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetOperator(Guid id)
+        public async Task<IActionResult> GetOperator(long id)
         {
             var operador = await _operatorService.GetOperator(id);
             if (operador == null)
