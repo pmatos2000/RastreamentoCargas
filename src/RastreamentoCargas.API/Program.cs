@@ -7,8 +7,7 @@ builder.Services
     .AddDatabaseAndIdentity(builder.Configuration)
     .AddJwtAuthentication(builder.Configuration)
     .AddApplicationServices()
-    .AddSwaggerGen()
-    .AddEndpointsApiExplorer()
+    .AddSwaggerServices()
     .AddControllers();
 
 var app = builder.Build();
