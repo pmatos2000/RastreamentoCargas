@@ -12,5 +12,6 @@ namespace RastreamentoCargas.Domain.Entities
         public required string CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string? UpdatedBy { get; set; }
+
     }
 }

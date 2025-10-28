@@ -15,6 +15,8 @@ namespace RastreamentoCargas.Infrastructure.Data
         private const string CREATED_BY_SYSTEM = "System";
         private const int MAX_USERNAME_LENGTH = 100;
 
+        public DbSet<Operator> Operators = null!;
+
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
             IHttpContextAccessor httpContextAccessor) : base(options)
