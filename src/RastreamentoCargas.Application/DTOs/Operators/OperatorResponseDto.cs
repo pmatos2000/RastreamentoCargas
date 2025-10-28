@@ -5,6 +5,7 @@ namespace RastreamentoCargas.Application.DTOs.Operators
     public record OperatorResponseDto
     {
         public required long Id { get; init; }
+        public Guid ExternalId { get; init; }
         public required string UserName { get; init; }
         public string? Email { get; init; }
         public required string FullName { get; init; }
@@ -18,6 +19,7 @@ namespace RastreamentoCargas.Application.DTOs.Operators
             return new OperatorResponseDto
             {
                 Id = op.Id,
+                ExternalId = op.ExternalId,
                 UserName = op.UserName ?? "",
                 Email = op.Email,
                 FullName = op.FullName,
