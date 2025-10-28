@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RastreamentoCargas.Application\RastreamentoCargas.Application.csproj" />
     <ProjectReference Include="..\RastreamentoCargas.Domain\RastreamentoCargas.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
