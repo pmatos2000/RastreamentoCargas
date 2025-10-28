@@ -54,13 +54,11 @@ namespace RastreamentoCargas.API.Controllers
             }
         }
 
-        /*
-         * 
-        // PUT: api/operadores/{id}
+        
         [HttpPut("{id}")]
-        [ProducesResponseType(204)] // 204 No Content (sucesso, sem corpo)
+        [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateOperador(string id, [FromBody] UpdateOperatorRequestDto dto)
+        public async Task<IActionResult> UpdateOperador(long id, [FromBody] UpdateOperatorRequestDto dto)
         {
             var success = await _operatorService.UpdateAsync(id, dto);
             if (!success)
@@ -70,6 +68,7 @@ namespace RastreamentoCargas.API.Controllers
             return NoContent();
         }
 
+        /*
         // DELETE: api/operadores/{id}
         [HttpDelete("{id}")]
         [ProducesResponseType(204)] // 204 No Content

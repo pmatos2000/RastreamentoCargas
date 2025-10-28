@@ -7,5 +7,6 @@ namespace RastreamentoCargas.Application.Interfaces
         Task<IEnumerable<OperatorResponseDto>> GetAllAsync();
         Task<OperatorResponseDto?> GetOperator(long id);
         Task<OperatorResponseDto> CreateAsync(CreateOperatorRequestDto dto);
+        Task<bool> UpdateAsync(long id, UpdateOperatorRequestDto dto);
     }
 }

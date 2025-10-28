@@ -54,5 +54,25 @@ namespace RastreamentoCargas.Infrastructure.Services
 
             return (OperatorResponseDto) newOperator;
         }
+
+        public async Task<bool> UpdateAsync(long id, UpdateOperatorRequestDto dto)
+        {
+            var operatorEntity = await context.Operators
+                .FirstOrDefaultAsync(o => o.Id == id && o.IsActive);
+
+            if (operatorEntity is null) return false;
+
+
+            operatorEntity.Email = dto.Email ?? operatorEntity.Email;
+            operatorEntity.FullName = dto.FullName ?? operatorEntity.FullName;
+            operatorEntity.EmployeeId = dto.EmployeeId ?? operatorEntity.EmployeeId;
+            operatorEntity.Department = dto.Department ?? operatorEntity.Department;
+            operatorEntity.IsActive = dto.IsActive ?? operatorEntity.IsActive;
+
+            context.Operators.Update(operatorEntity);
+            await context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
