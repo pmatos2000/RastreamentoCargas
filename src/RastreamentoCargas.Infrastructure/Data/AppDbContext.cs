@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using RastreamentoCargas.Domain.Common;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Interfaces.Common;
+
 namespace RastreamentoCargas.Infrastructure.Data
 {
-    public class AppDbContext : IdentityDbContext<User>
+    public sealed class AppDbContext : IdentityDbContext<User>
     {
-        
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private const string CREATED_BY_SYSTEM = "System";
@@ -22,7 +22,6 @@ namespace RastreamentoCargas.Infrastructure.Data
             _httpContextAccessor = httpContextAccessor;
         }
 
-        
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SetAuditProperties();
@@ -31,9 +30,78 @@ namespace RastreamentoCargas.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
             base.OnModelCreating(builder);
+            ApplyAutomaticConfigurations(builder);
+            SeedRootUser(builder);
+        }
 
+        /// <summary>
+        /// Define automaticamente as propriedades de auditoria (IAuditable)
+        /// para todas as entidades rastreadas que estão sendo adicionadas ou modificadas.
+        /// </summary>
+        private void SetAuditProperties()
+        {
+            var userLoggedIn = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? CREATED_BY_SYSTEM;
+
+            var entries = ChangeTracker.Entries<IAuditable>();
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.CreatedBy = userLoggedIn;
+                    entry.Entity.UpdatedAt = null;
+                    entry.Entity.UpdatedBy = null;
+                    entry.Entity.IsActive = true;
+
+                    if (entry.Entity is BaseEntity baseEntity)
+                    {
+                        baseEntity.ExternalId = Guid.NewGuid();
+                    }
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    entry.Entity.UpdatedBy = userLoggedIn;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Aplica configurações globais a todas as entidades do DbContext
+        /// usando reflexão, com base nas interfaces que elas implementam.
+        /// </summary>
+        private void ApplyAutomaticConfigurations(ModelBuilder builder)
+        {
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    builder.Entity(entityType.ClrType)
+                           .HasIndex(nameof(BaseEntity.ExternalId))
+                           .IsUnique();
+                }
+
+                if (typeof(IAuditable).IsAssignableFrom(entityType.ClrType))
+                {
+                    builder.Entity(entityType.ClrType)
+                           .Property(nameof(IAuditable.CreatedBy))
+                           .HasMaxLength(MAX_USERNAME_LENGTH);
+
+                    builder.Entity(entityType.ClrType)
+                           .Property(nameof(IAuditable.UpdatedBy))
+                           .HasMaxLength(MAX_USERNAME_LENGTH);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adiciona o usuário 'root' (Administrador) ao banco de dados
+        /// através do mecanismo de Seeding da Migração.
+        /// </summary>
+        private void SeedRootUser(ModelBuilder builder)
+        {
             var passwordHasher = new PasswordHasher<User>();
 
             var rootUser = new User
@@ -54,49 +122,6 @@ namespace RastreamentoCargas.Infrastructure.Data
             rootUser.PasswordHash = passwordHasher.HashPassword(rootUser, "Teste123.");
 
             builder.Entity<User>().HasData(rootUser);
-
-            foreach (var entityType in builder.Model.GetEntityTypes())
-            {
-                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
-                {
-                    builder.Entity(entityType.ClrType)
-                        .HasIndex(nameof(BaseEntity.ExternalId))
-                        .IsUnique();
-                }
-                if (typeof(IAuditable).IsAssignableFrom(entityType.ClrType))
-                {
-                    builder.Entity(entityType.ClrType)
-                        .Property(nameof(IAuditable.CreatedBy))
-                        .HasMaxLength(MAX_USERNAME_LENGTH);
-
-                    builder.Entity(entityType.ClrType)
-                        .Property(nameof(IAuditable.UpdatedBy))
-                        .HasMaxLength(MAX_USERNAME_LENGTH);
-                }
-            }
-        }
-
-        private void SetAuditProperties()
-        {
-            var userLoggedIn = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? CREATED_BY_SYSTEM;
-            var entries = ChangeTracker.Entries<IAuditable>();
-
-            foreach (var entry in entries)
-            {
-                entry.Entity.CreatedAt = DateTime.UtcNow;
-                entry.Entity.CreatedBy = userLoggedIn;
-
-                if (entry.State == EntityState.Added)
-                {
-                    entry.Entity.UpdatedAt = null;
-                    entry.Entity.UpdatedBy = null;
-
-                    if (entry.Entity is BaseEntity baseEntity)
-                    {
-                        baseEntity.ExternalId = Guid.NewGuid();
-                    }
-                }
-            }
         }
     }
 }
