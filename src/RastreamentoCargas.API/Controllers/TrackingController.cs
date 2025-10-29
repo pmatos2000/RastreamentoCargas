@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.DTOs.Trips;
 using RastreamentoCargas.Application.Interfaces;
 using System.Security.Claims;
-using FluentValidation;
 
 namespace RastreamentoCargas.API.Controllers
 {
@@ -13,10 +14,12 @@ namespace RastreamentoCargas.API.Controllers
     public class TrackingController : ControllerBase
     {
         private readonly ITripService _tripService;
+        private readonly ITripHistoryService _tripHistoryService;
 
-        public TrackingController(ITripService tripService)
+        public TrackingController(ITripService tripService, ITripHistoryService tripHistoryService)
         {
             _tripService = tripService;
+            _tripHistoryService = tripHistoryService;
         }
 
         [HttpPost]
@@ -171,6 +174,25 @@ namespace RastreamentoCargas.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Retorna o histórico completo de uma carga, ordenado do mais recente para o mais antigo.
+        /// </summary>
+        [HttpGet("{codigoCarga:guid}/historico")]
+        [ProducesResponseType(typeof(IEnumerable<TripHistoryResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTripHistory(Guid codigoCarga)
+        {
+            var history = await _tripHistoryService.GetByTripCodeAsync(codigoCarga);
+
+            if (history == null) 
+            {
+                return NotFound($"Carga com código {codigoCarga} não encontrada.");
+            }
+
+            return Ok(history);
+
         }
     }
 }

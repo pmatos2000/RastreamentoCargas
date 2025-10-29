@@ -1,11 +1,13 @@
-﻿using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
+﻿using RastreamentoCargas.Application.DTOs.TripHistories;
+using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Domain.Entities;
-using RastreamentoCargas.Domain.Enums;
+
 
 namespace RastreamentoCargas.Application.Interfaces
 {
     public interface ITripHistoryService
     {
         Task RegisterOccurrenceAsync(RegisterOccurrenceDto dto);
+        Task<IEnumerable<TripHistoryResponseDto>?> GetByTripCodeAsync(Guid tripCode);
     }
 }

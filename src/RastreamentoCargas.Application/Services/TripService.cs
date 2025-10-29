@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using RastreamentoCargas.Application.DTOs.Coordinates;
-using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
+using RastreamentoCargas.Application.DTOs.TripHistories;
 using RastreamentoCargas.Application.DTOs.Trips;
 using RastreamentoCargas.Application.Interfaces;
 using RastreamentoCargas.Domain.Entities;

@@ -1,7 +1,7 @@
-﻿using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
+﻿using RastreamentoCargas.Application.DTOs.TripHistories;
+using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.Interfaces;
 using RastreamentoCargas.Domain.Entities;
-using RastreamentoCargas.Domain.Enums;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 
 namespace RastreamentoCargas.Application.Services
@@ -21,5 +21,13 @@ namespace RastreamentoCargas.Application.Services
 
             await tripHistoryRepository.CreateAsync(historyEntry);
         }
+
+        public async Task<IEnumerable<TripHistoryResponseDto>?> GetByTripCodeAsync(Guid tripCode)
+        {
+            var histories = await tripHistoryRepository.GetByTripCodeAsync(tripCode);
+
+            return histories?.Select(h => (TripHistoryResponseDto) h);
+        }
+
     }
 }

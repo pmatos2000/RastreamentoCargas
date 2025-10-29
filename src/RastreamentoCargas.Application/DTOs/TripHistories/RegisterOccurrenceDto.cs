@@ -1,6 +1,6 @@
 ﻿using RastreamentoCargas.Domain.Enums;
 
-namespace RastreamentoCargas.Application.DTOs.TripHistoryRepositorys
+namespace RastreamentoCargas.Application.DTOs.TripHistories
 {
     public record RegisterOccurrenceDto(
         long TripId,
