@@ -97,5 +97,32 @@ namespace RastreamentoCargas.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        /// <summary>
+        /// Atualiza somente a localização atual da carga.
+        /// </summary>
+        /// <param name="codigoCarga">O código único de rastreamento (GUID).</param>
+        /// <param name="dto">Nova localização.</param>
+        [HttpPut("{codigoCarga:guid}/localizacao")]
+        [ProducesResponseType(typeof(TripResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateTripLocation(Guid codigoCarga, [FromBody] UpdateLocationRequestDto dto)
+        {
+            try
+            {
+                var updatedTrip = await _tripService.UpdateLocationAsync(codigoCarga, dto);
+                return Ok(updatedTrip);
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (ex.Message.Contains("não encontrada"))
+                {
+                    return NotFound(ex.Message);
+                }
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

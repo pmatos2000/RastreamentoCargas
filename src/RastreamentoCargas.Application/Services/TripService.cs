@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using RastreamentoCargas.Application.DTOs.Coordinates;
 using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.DTOs.Trips;
 using RastreamentoCargas.Application.Interfaces;
@@ -27,15 +28,14 @@ namespace RastreamentoCargas.Infrastructure.Services
                 throw new ValidationException(validationResult.Errors);
             }
 
-            var clientExists = await clientRepository.GetByIdAsync(dto.ClientId) != null;
-            var operatorExists = await operatorService.GetByIdAsync(operatorId) != null;
+            if (await clientRepository.GetByIdAsync(dto.ClientId) is null)
+                throw new InvalidOperationException($"Cliente com ID {dto.ClientId} não encontrado.");
 
-            if (!clientExists) throw new InvalidOperationException($"Cliente com ID {dto.ClientId} não encontrado.");
-            if (!operatorExists) throw new InvalidOperationException($"Operador com ID {operatorId} não encontrado.");
+            if (await operatorService.GetByIdAsync(operatorId) is null)
+                throw new InvalidOperationException($"Operador com ID {operatorId} não encontrado.");
 
             var originCoords = await geocodingService.GetCoordinatesAsync(dto.OriginLocation);
             var destCoords = await geocodingService.GetCoordinatesAsync(dto.DestinationLocation);
-
 
             var newTrip = new Trip
             {
@@ -158,6 +158,28 @@ namespace RastreamentoCargas.Infrastructure.Services
                 TripStatus.Canceled => $"Viagem cancelada pelo sistema/operador.",
                 _ => $"Status alterado para {statusName} em {location}."
             };
+        }
+
+        public async Task<TripResponseDto> UpdateLocationAsync(Guid trackingCode, UpdateLocationRequestDto dto)
+        {
+            var trip = await tripRepository.GetByExternalIdAsync(trackingCode)
+                ?? throw new InvalidOperationException($"Carga com código {trackingCode} não encontrada ou cancelada.");
+
+
+            if (trip.CurrentStatus == TripStatus.Delivered || trip.CurrentStatus == TripStatus.Canceled)
+            {
+                throw new InvalidOperationException($"Não é possível atualizar a localização, pois a carga está com status '{trip.CurrentStatus.GetFriendlyName()}'.");
+            }
+
+            CoordinatesDto newCoords = await geocodingService.GetCoordinatesAsync(dto.NewLocation);
+
+            trip.CurrentLocation = dto.NewLocation;
+            trip.CurrentLatitude = newCoords.Latitude;
+            trip.CurrentLongitude = newCoords.Longitude;
+
+            await tripRepository.UpdateAsync(trip);
+
+            return (TripResponseDto)trip;
         }
     }
 }
