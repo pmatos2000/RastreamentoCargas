@@ -6,7 +6,7 @@ namespace RastreamentoCargas.Application.DTOs.TripHistoryRepositorys
 {
     public record TripHistoryResponseDto
     {
-        public Guid Id { get; init; }
+        public long Id { get; init; }
         public required TripStatus Status { get; init; }
         public required string StatusDescription { get; init; }
         public DateTime OccurrenceDateTime { get; init; }
@@ -17,7 +17,7 @@ namespace RastreamentoCargas.Application.DTOs.TripHistoryRepositorys
         {
             return new TripHistoryResponseDto
             {
-                Id = history.ExternalId,
+                Id = history.Id,
                 Status = history.OccurrenceStatus,
                 StatusDescription = history.OccurrenceStatus.GetFriendlyName(),
                 OccurrenceDateTime = history.OccurrenceDateTime,
