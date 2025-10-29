@@ -12,7 +12,7 @@ namespace RastreamentoCargas.Application.DTOs.Clients
         public required ClientDocumentType DocumentType { get; init; }
 
         [Required]
-        public required string DocumentNumber { get; init; }
+        public required string Document { get; init; }
 
         [EmailAddress]
         public string? ContactEmail { get; init; }

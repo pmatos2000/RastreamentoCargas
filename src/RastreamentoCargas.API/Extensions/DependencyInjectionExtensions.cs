@@ -1,4 +1,8 @@
-﻿using RastreamentoCargas.Application.Interfaces;
+﻿using FluentValidation;
+using RastreamentoCargas.Application.Interfaces;
+using RastreamentoCargas.Application.Validators.Client;
+using RastreamentoCargas.Domain.Interfaces;
+using RastreamentoCargas.Infrastructure.Repositories;
 using RastreamentoCargas.Infrastructure.Services;
 
 namespace RastreamentoCargas.API.Extensions
@@ -10,6 +14,10 @@ namespace RastreamentoCargas.API.Extensions
 
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IOperatorService, OperatorService>();
+
+            services.AddScoped<IClientRepository, ClientRepository>();
+
+            services.AddValidatorsFromAssemblyContaining<CreateClientRequestDtoValidator>();
 
             return services;
         }

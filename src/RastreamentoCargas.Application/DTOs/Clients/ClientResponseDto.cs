@@ -8,8 +8,8 @@ namespace RastreamentoCargas.Application.DTOs.Clients
         public required long Id { get; init; }
         public required Guid ExternalId { get; init; }
         public required string Name { get; init; }
-        public required ClientDocumentType DocumentType { get; set; }
-        public required string Document { get; set; }
+        public required ClientDocumentType DocumentType { get; init; }
+        public required string Document { get; init; }
         public string? ContactEmail { get; init; }
         public string? Phone { get; init; }
         public bool IsActive { get; init; }

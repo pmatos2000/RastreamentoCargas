@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using RastreamentoCargas.Application.DTOs.Clients;
 using RastreamentoCargas.Application.Interfaces;
 using RastreamentoCargas.Domain.Entities;
@@ -7,16 +8,23 @@ using RastreamentoCargas.Infrastructure.Data;
 
 namespace RastreamentoCargas.Infrastructure.Services
 {
-    public sealed class ClientService(IClientRepository clientRepository) : IClientService
+    public sealed class ClientService(
+        IClientRepository clientRepository,
+        IValidator<CreateClientRequestDto> validatorCreateClientRequestDto) : IClientService
     {
         public async Task<ClientResponseDto> CreateAsync(CreateClientRequestDto dto)
         {
+            var validationResult = await validatorCreateClientRequestDto.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             var newClient = new Client
             {
                 Name = dto.Name,
                 DocumentType = dto.DocumentType,
-                Document = dto.DocumentNumber,
+                Document = dto.Document,
                 ContactEmail = dto.ContactEmail,
                 Phone = dto.Phone,
             };
