@@ -6,7 +6,9 @@
         public const int DoumentDefaultLength = 20;
         public const int PhoneDefaultLength = 20;
         public const int EmailDefaultLength = 255;
-        
+        public const int LocationDefaultLength = 255;
+        public const int ObservationDefaultLength = 500;
+
         public static class User
         {
             public const int PasswordMinLength = 8;
