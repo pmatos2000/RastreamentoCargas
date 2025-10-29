@@ -19,9 +19,6 @@ namespace RastreamentoCargas.Infrastructure.Services
                 Document = dto.DocumentNumber,
                 ContactEmail = dto.ContactEmail,
                 Phone = dto.Phone,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = string.Empty,
             };
 
             var client = await clientRepository.CreateAsync(newClient);

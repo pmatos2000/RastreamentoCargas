@@ -38,8 +38,6 @@ namespace RastreamentoCargas.Infrastructure.Services
                 FullName = dto.FullName,
                 EmployeeId = dto.EmployeeId,
                 Department = dto.Department,
-                CreatedBy = string.Empty,
-                CreatedAt = DateTime.UtcNow,
             };
 
             var result = await userManager.CreateAsync(newOperator, dto.Password);

@@ -7,9 +7,8 @@ namespace RastreamentoCargas.Domain.Entities
     {
         public required string FullName { get; set; }
         public bool IsActive { get; set; } = true;
-
-        public DateTime CreatedAt { get; set; }
-        public required string CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; } = default!;
+        public string CreatedBy { get; set; } = null!;
         public DateTime? UpdatedAt { get; set; }
         public string? UpdatedBy { get; set; }
         public Guid ExternalId { get; set; }
