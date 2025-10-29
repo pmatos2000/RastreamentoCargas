@@ -13,5 +13,8 @@ namespace RastreamentoCargas.Application.Interfaces
         Task<TripResponseDto> UpdateStatusAsync(Guid trackingCode, UpdateStatusRequestDto dto);
 
         Task<TripResponseDto> UpdateLocationAsync(Guid trackingCode, UpdateLocationRequestDto dto);
+
+        Task<TripResponseDto> DeliverTripAsync(Guid trackingCode, string? finalLocationDetails);
+        Task<bool> CancelAsync(Guid trackingCode);
     }
 }

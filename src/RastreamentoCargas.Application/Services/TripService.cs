@@ -181,5 +181,87 @@ namespace RastreamentoCargas.Infrastructure.Services
 
             return (TripResponseDto)trip;
         }
+
+        /// <summary>
+        /// Marca a carga como Entregue e registra o histórico final.
+        /// </summary>
+        /// <param name="trackingCode">O código único da carga (ExternalId).</param>
+        /// <param name="finalLocationDetails">Localização confirmada da entrega (opcional).</param>
+        public async Task<TripResponseDto> DeliverTripAsync(Guid trackingCode, string? finalLocationDetails)
+        {
+            var trip = await tripRepository.GetByExternalIdAsync(trackingCode);
+
+            if (trip == null || !trip.IsActive)
+            {
+                throw new InvalidOperationException($"Carga com código {trackingCode} não encontrada ou cancelada.");
+            }
+
+            if (trip.CurrentStatus == TripStatus.Delivered)
+            {
+                return (TripResponseDto)trip;
+            }
+            if (trip.CurrentStatus == TripStatus.Canceled)
+            {
+                throw new InvalidOperationException($"Não é possível marcar como Entregue, pois a carga foi '{TripStatus.Canceled.GetFriendlyName()}'.");
+            }
+
+            var confirmedLocation = trip.CurrentLocation;
+            var finalCoords = new CoordinatesDto(trip.CurrentLatitude, trip.CurrentLongitude);
+
+            if (!string.IsNullOrWhiteSpace(finalLocationDetails) && finalLocationDetails != trip.CurrentLocation)
+            {
+                confirmedLocation = finalLocationDetails;
+                finalCoords = await geocodingService.GetCoordinatesAsync(confirmedLocation);
+            }
+
+            trip.CurrentStatus = TripStatus.Delivered;
+            trip.CurrentLocation = confirmedLocation;
+            trip.CurrentLatitude = finalCoords.Latitude;
+            trip.CurrentLongitude = finalCoords.Longitude;
+
+            await tripRepository.UpdateAsync(trip);
+
+            await tripHistoryService.RegisterOccurrenceAsync(
+                new (
+                    TripId: trip.Id,
+                    Status: TripStatus.Delivered,
+                    OccurrenceDateTime: DateTime.UtcNow,
+                    LocationDetails: confirmedLocation,
+                    Observation: GetDefaultObservation(TripStatus.Delivered, confirmedLocation)
+                )
+            );
+
+            return (TripResponseDto)trip;
+        }
+
+        public async Task<bool> CancelAsync(Guid trackingCode)
+        {
+            var trip = await tripRepository.GetByExternalIdAsync(trackingCode);
+
+            if (trip == null) return false;
+            if (!trip.IsActive) return true; 
+
+            if (trip.CurrentStatus == TripStatus.Delivered)
+            {
+                throw new InvalidOperationException($"Não é possível cancelar a carga, pois ela já foi '{TripStatus.Delivered.GetFriendlyName()}'.");
+            }
+
+            trip.IsActive = false; 
+            trip.CurrentStatus = TripStatus.Canceled;
+
+            await tripRepository.UpdateAsync(trip);
+
+            await tripHistoryService.RegisterOccurrenceAsync(
+                new (
+                    TripId: trip.Id,
+                    Status: TripStatus.Canceled,
+                    OccurrenceDateTime: DateTime.UtcNow,
+                    LocationDetails: trip.CurrentLocation,
+                    Observation: "Carga cancelada."
+                )
+            );
+
+            return true;
+        }
     }
 }

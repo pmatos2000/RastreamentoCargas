@@ -124,5 +124,53 @@ namespace RastreamentoCargas.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Marca a carga como Entregue e registra o histórico final.
+        /// </summary>
+        [HttpPut("{codigoCarga:guid}/entrega")]
+        [ProducesResponseType(typeof(TripResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeliverTrip(Guid codigoCarga, [FromBody] DeliverTripRequestDto dto)
+        {
+            try
+            {
+                var updatedTrip = await _tripService.DeliverTripAsync(codigoCarga, dto.FinalLocationDetails);
+                return Ok(updatedTrip);
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (ex.Message.Contains("não encontrada"))
+                {
+                    return NotFound(ex.Message);
+                }
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cancela (remove logicamente) a carga do sistema.
+        /// </summary>
+        [HttpDelete("{codigoCarga:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] 
+        [ProducesResponseType(StatusCodes.Status404NotFound)] 
+        public async Task<IActionResult> CancelTrip(Guid codigoCarga)
+        {
+            try
+            {
+                var success = await _tripService.CancelAsync(codigoCarga);
+                if (!success)
+                {
+                    return NotFound($"Carga com código {codigoCarga} não encontrada.");
+                }
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
