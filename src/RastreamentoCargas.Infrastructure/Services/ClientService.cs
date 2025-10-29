@@ -56,6 +56,10 @@ namespace RastreamentoCargas.Infrastructure.Services
 
             if (client is null) return false;
 
+            client.Name = dto.Name ?? client.Name;
+            client.ContactEmail = dto.ContactEmail ?? client.ContactEmail;
+            client.Phone = dto.Phone ?? client.Phone;
+
             var result = await clientRepository.UpdateAsync(client);
 
             return result;
