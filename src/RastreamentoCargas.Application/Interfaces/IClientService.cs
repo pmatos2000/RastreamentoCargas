@@ -9,6 +9,5 @@ namespace RastreamentoCargas.Application.Interfaces
         Task<ClientResponseDto> CreateAsync(CreateClientRequestDto dto);
         Task<bool> UpdateAsync(long id, UpdateClientRequestDto dto);
         Task<bool> DeleteAsync(long id);
-        Task<bool> IsDocumentUnique(string document);
     }
 }

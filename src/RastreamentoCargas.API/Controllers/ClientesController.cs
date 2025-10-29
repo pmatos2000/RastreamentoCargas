@@ -45,6 +45,7 @@ namespace RastreamentoCargas.API.Controllers
             }
             return Ok(client);
         }
+
         /// <summary>
         /// Cria um novo cliente no sistema.
         /// </summary>
