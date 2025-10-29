@@ -10,11 +10,11 @@ namespace RastreamentoCargas.API.Controllers
     [Route("api/clientes")]
     [Authorize] 
     [Produces(MediaTypeNames.Application.Json)]
-    public class ClientesController : ControllerBase
+    public class ClientsController : ControllerBase
     {
         private readonly IClientService _clientService;
 
-        public ClientesController(IClientService clientService)
+        public ClientsController(IClientService clientService)
         {
             _clientService = clientService;
         }
