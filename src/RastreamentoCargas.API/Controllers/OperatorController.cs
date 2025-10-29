@@ -30,7 +30,7 @@ namespace RastreamentoCargas.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetOperator(long id)
         {
-            var operador = await _operatorService.GetOperator(id);
+            var operador = await _operatorService.GetByIdAsync(id);
             if (operador == null)
             {
                 return NotFound("Operador não encontrado.");

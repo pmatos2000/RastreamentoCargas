@@ -16,9 +16,12 @@ namespace RastreamentoCargas.API.Extensions
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IOperatorService, OperatorService>();
             services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<ITripService, TripService>();
+            services.AddScoped<IGeocodingService, GeocodingService>();
 
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IOperatorRepository, OperatorRepository>();
+            services.AddScoped<ITripRepository, TripRepository>();
 
             services.AddValidatorsFromAssemblyContaining<CreateClientRequestDtoValidator>();
 

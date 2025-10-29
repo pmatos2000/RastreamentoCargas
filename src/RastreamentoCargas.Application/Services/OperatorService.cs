@@ -14,7 +14,7 @@ namespace RastreamentoCargas.Application.Services
             return operators.Select(o => (OperatorResponseDto) o);
         }
 
-        public async Task<OperatorResponseDto?> GetOperator(long id)
+        public async Task<OperatorResponseDto?> GetByIdAsync(long id)
         {
             var operatorEntity = await operatorRepository.GetByIdAsync(id);
             

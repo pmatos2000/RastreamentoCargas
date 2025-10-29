@@ -21,10 +21,10 @@ namespace RastreamentoCargas.Domain.Entities
         public double CurrentLongitude { get; set; }
 
         public long ClientId { get; set; } 
-        public virtual required Client Client { get; set; } = null!;
+        public virtual Client Client { get; set; } = null!;
 
         public long OperatorId { get; set; }
-        public virtual required Operator Operator { get; set; } = null!;
+        public virtual Operator Operator { get; set; } = null!;
 
         public virtual ICollection<TripHistory> History { get; set; } = [];
     }
