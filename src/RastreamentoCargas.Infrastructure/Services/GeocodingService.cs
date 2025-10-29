@@ -6,7 +6,7 @@ namespace RastreamentoCargas.Infrastructure.Services
 {
     public sealed class GeocodingService(HttpClient httpClient) : IGeocodingService
     {
-        private record NominatimResult(string Lat, string Lon);
+        private record NominatimResult(string? lat, string? lon);
 
         public async Task<CoordinatesDto> GetCoordinatesAsync(string address)
         {
@@ -30,8 +30,8 @@ namespace RastreamentoCargas.Infrastructure.Services
             var bestResult = results.First();
 
             return new CoordinatesDto(
-                Latitude: double.Parse(bestResult.Lat, System.Globalization.CultureInfo.InvariantCulture),
-                Longitude: double.Parse(bestResult.Lon, System.Globalization.CultureInfo.InvariantCulture)
+                Latitude: double.Parse(bestResult.lat ?? "0", System.Globalization.CultureInfo.InvariantCulture),
+                Longitude: double.Parse(bestResult.lon ?? "0", System.Globalization.CultureInfo.InvariantCulture)
             );
         }
     }
