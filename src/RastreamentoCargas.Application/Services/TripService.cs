@@ -243,7 +243,7 @@ namespace RastreamentoCargas.Infrastructure.Services
 
             if (trip.CurrentStatus == TripStatus.Delivered)
             {
-                throw new InvalidOperationException($"Não é possível cancelar a carga, pois ela já foi '{TripStatus.Delivered.GetFriendlyName()}'.");
+                throw new InvalidOperationException($"Não é possível remover a carga, pois ela já foi '{TripStatus.Delivered.GetFriendlyName()}'.");
             }
 
             trip.IsActive = false; 
