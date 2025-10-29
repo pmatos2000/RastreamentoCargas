@@ -92,10 +92,10 @@ namespace RastreamentoCargas.Infrastructure.Data
         {
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
-                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                if (typeof(IBaseEntity).IsAssignableFrom(entityType.ClrType))
                 {
                     builder.Entity(entityType.ClrType)
-                           .HasIndex(nameof(BaseEntity.ExternalId))
+                           .HasIndex(nameof(IBaseEntity.ExternalId))
                            .IsUnique();
                 }
 
