@@ -45,7 +45,7 @@ namespace RastreamentoCargas.Infrastructure.Repositories
 
         public async Task<bool> IsDocumentUnique(string document)
         {
-            var exists =  !await context.Clients
+            var exists = await context.Clients
                 .AnyAsync(c => c.Document == document && c.IsActive);
 
             return !exists;
