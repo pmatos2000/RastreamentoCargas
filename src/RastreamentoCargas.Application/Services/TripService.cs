@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
+using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.DTOs.Trips;
 using RastreamentoCargas.Application.Interfaces;
+using RastreamentoCargas.Application.Services;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Enums;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
@@ -14,6 +16,7 @@ namespace RastreamentoCargas.Infrastructure.Services
         IClientRepository clientRepository, 
         IOperatorService operatorService,
         IGeocodingService geocodingService,
+        ITripHistoryService tripHistoryService,
         IValidator<RegisterTripRequestDto> validatorRegisterTripRequestDto) : ITripService
     {
         public async Task<TripResponseDto> RegisterAsync(RegisterTripRequestDto dto, long operatorId)
@@ -55,6 +58,16 @@ namespace RastreamentoCargas.Infrastructure.Services
             };
 
             var persistedTrip = await tripRepository.CreateAsync(newTrip);
+
+            var occurrenceDto = new RegisterOccurrenceDto(
+                TripId: persistedTrip.Id, 
+                Status: TripStatus.Initiated,
+                OccurrenceDateTime: DateTime.UtcNow,
+                LocationDetails: persistedTrip.CurrentLocation,
+                Observation: "Carga registrada no sistema e pronta para coleta."
+            );
+
+            await tripHistoryService.RegisterOccurrenceAsync(occurrenceDto);
 
             return (TripResponseDto) persistedTrip; 
         }

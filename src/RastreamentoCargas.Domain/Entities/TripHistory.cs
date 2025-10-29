@@ -11,7 +11,7 @@ namespace RastreamentoCargas.Domain.Entities
         public string? Observation { get; set; }
 
         public long TripId { get; set; }
-        public virtual required Trip Trip { get; set; } = null!;
+        public virtual Trip Trip { get; set; } = null!;
     }
 
 }
