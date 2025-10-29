@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RastreamentoCargas.Domain.Entities;
-using RastreamentoCargas.Domain.Interfaces;
+using RastreamentoCargas.Domain.Interfaces.Repositories;
 using RastreamentoCargas.Infrastructure.Data;
 using System;
 using System.Collections.Generic;

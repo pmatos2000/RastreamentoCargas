@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using RastreamentoCargas.Application.DTOs.Clients;
 using RastreamentoCargas.Domain.Common;
-using RastreamentoCargas.Domain.Interfaces;
+using RastreamentoCargas.Domain.Interfaces.Repositories;
 
 namespace RastreamentoCargas.Application.Validators.Client
 {

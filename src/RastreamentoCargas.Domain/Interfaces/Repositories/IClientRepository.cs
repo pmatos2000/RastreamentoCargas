@@ -1,6 +1,6 @@
 ﻿using RastreamentoCargas.Domain.Entities;
 
-namespace RastreamentoCargas.Domain.Interfaces
+namespace RastreamentoCargas.Domain.Interfaces.Repositories
 {
     public interface IClientRepository
     {
