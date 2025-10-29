@@ -7,7 +7,7 @@ using RastreamentoCargas.Infrastructure.Data;
 
 namespace RastreamentoCargas.Infrastructure.Services
 {
-    public class OperatorService(AppDbContext context, UserManager<User> userManager) : IOperatorService
+    public sealed class OperatorService(AppDbContext context, UserManager<User> userManager) : IOperatorService
     {
         public async Task<IEnumerable<OperatorResponseDto>> GetAllAsync()
         {
