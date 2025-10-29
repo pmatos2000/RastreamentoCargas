@@ -1,22 +1,38 @@
 ﻿using RastreamentoCargas.Application.DTOs.Coordinates;
 using RastreamentoCargas.Application.Interfaces;
+using System.Text.Json;
 
 namespace RastreamentoCargas.Infrastructure.Services
 {
-    public sealed class GeocodingService : IGeocodingService
+    public sealed class GeocodingService(HttpClient httpClient) : IGeocodingService
     {
-        public Task<CoordinatesDto> GetCoordinatesAsync(string address)
+        private record NominatimResult(string Lat, string Lon);
+
+        public async Task<CoordinatesDto> GetCoordinatesAsync(string address)
         {
-            if (address.Contains("São Paulo"))
+            var encodedAddress = Uri.EscapeDataString(address);
+
+            var uri = $"search?q={encodedAddress}&format=json&limit=1";
+
+            var response = await httpClient.GetAsync(uri);
+
+            response.EnsureSuccessStatusCode();
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            var results = JsonSerializer.Deserialize<NominatimResult[]>(jsonString);
+
+            if (results == null || results.Length == 0)
             {
-                return Task.FromResult(new CoordinatesDto(-23.5505, -46.6333));
-            }
-            if (address.Contains("Rio de Janeiro"))
-            {
-                return Task.FromResult(new CoordinatesDto(-22.9068, -43.1729));
+                throw new InvalidOperationException($"Não foi possível geocodificar o local: {address}");
             }
 
-            return Task.FromResult(new CoordinatesDto(-15.7801, -47.9292));
+            var bestResult = results.First();
+
+            return new CoordinatesDto(
+                Latitude: double.Parse(bestResult.Lat, System.Globalization.CultureInfo.InvariantCulture),
+                Longitude: double.Parse(bestResult.Lon, System.Globalization.CultureInfo.InvariantCulture)
+            );
         }
     }
 }

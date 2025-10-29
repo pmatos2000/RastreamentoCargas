@@ -25,6 +25,12 @@ namespace RastreamentoCargas.API.Extensions
 
             services.AddValidatorsFromAssemblyContaining<CreateClientRequestDtoValidator>();
 
+            services.AddHttpClient<IGeocodingService, GeocodingService>(client =>
+            {
+                client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("RastreamentoCargasAPI/1.0 (pmatos2000@gmail.com)");
+            });
+
             return services;
         }
     }

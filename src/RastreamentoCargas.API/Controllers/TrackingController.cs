@@ -27,7 +27,6 @@ namespace RastreamentoCargas.API.Controllers
         {
             try
             {
-
                 var operatorIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (!long.TryParse(operatorIdString, out long operatorId))
