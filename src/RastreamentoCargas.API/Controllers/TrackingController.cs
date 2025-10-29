@@ -76,5 +76,26 @@ namespace RastreamentoCargas.API.Controllers
             }
             return Ok(trip);
         }
+
+        [HttpPut("{codigoCarga:guid}/status")]
+        [ProducesResponseType(typeof(TripResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] 
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateTripStatus(Guid codigoCarga, [FromBody] UpdateStatusRequestDto dto)
+        {
+            try
+            {
+                var updatedTrip = await _tripService.UpdateStatusAsync(codigoCarga, dto);
+                return Ok(updatedTrip);
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (ex.Message.Contains("não encontrada"))
+                {
+                    return NotFound(ex.Message);
+                }
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -2,9 +2,9 @@
 using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.DTOs.Trips;
 using RastreamentoCargas.Application.Interfaces;
-using RastreamentoCargas.Application.Services;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Enums;
+using RastreamentoCargas.Domain.Extensions;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 
 
@@ -87,6 +87,77 @@ namespace RastreamentoCargas.Infrastructure.Services
             if (trip is null) return null;
 
             return (TripResponseDto) trip;
+        }
+
+        public async Task<TripResponseDto> UpdateStatusAsync(Guid trackingCode, UpdateStatusRequestDto dto)
+        {
+            var trip = await tripRepository.GetByExternalIdAsync(trackingCode);
+            if (trip == null || !trip.IsActive)
+            {
+                throw new InvalidOperationException($"Carga com código {trackingCode} não encontrada ou deletada.");
+            }
+
+            if (!IsValidStatusTransition(trip.CurrentStatus, dto.NewStatus))
+            {
+                var oldStatusName = trip.CurrentStatus.GetFriendlyName();
+                var newStatusName = dto.NewStatus.GetFriendlyName();
+                throw new InvalidOperationException($"Transição de status inválida: não é possível mudar de '{oldStatusName}' para '{newStatusName}'.");
+            }
+
+            var newCoords = await geocodingService.GetCoordinatesAsync(dto.NewLocation);
+
+            trip.CurrentStatus = dto.NewStatus;
+            trip.CurrentLocation = dto.NewLocation;
+            trip.CurrentLatitude = newCoords.Latitude;
+            trip.CurrentLongitude = newCoords.Longitude;
+
+            await tripRepository.UpdateAsync(trip);
+
+            var finalObservation = dto.Observation ?? GetDefaultObservation(dto.NewStatus, dto.NewLocation);
+
+            await tripHistoryService.RegisterOccurrenceAsync(
+                new RegisterOccurrenceDto(
+                    TripId: trip.Id,
+                    Status: dto.NewStatus,
+                    OccurrenceDateTime: DateTime.UtcNow,
+                    LocationDetails: dto.NewLocation,
+                    Observation: finalObservation
+                )
+            );
+
+            return (TripResponseDto) trip;
+        }
+
+
+        private static bool IsValidStatusTransition(TripStatus oldStatus, TripStatus newStatus)
+        {
+
+            if (oldStatus == TripStatus.Delivered || oldStatus == TripStatus.Canceled)
+            {
+                return false;
+            }
+
+            if (newStatus == TripStatus.Initiated && oldStatus != TripStatus.Initiated)
+            {
+                return oldStatus == TripStatus.Canceled;
+            }
+
+            return true;
+        }
+
+        private static string GetDefaultObservation(TripStatus status, string location)
+        {
+            var statusName = status.GetFriendlyName();
+
+            return status switch
+            {
+                TripStatus.Initiated => $"Viagem registrada. Status inicial: {statusName}.",
+                TripStatus.InTransit => $"A carga entrou em rota. Status: {statusName}. Local: {location}.",
+                TripStatus.Transshipment => $"Ocorrência de Transbordo registrada. Localização: {location}.",
+                TripStatus.Delivered => $"Entrega finalizada com sucesso. Status: {statusName}. Local: {location}.",
+                TripStatus.Canceled => $"Viagem cancelada pelo sistema/operador.",
+                _ => $"Status alterado para {statusName} em {location}."
+            };
         }
     }
 }

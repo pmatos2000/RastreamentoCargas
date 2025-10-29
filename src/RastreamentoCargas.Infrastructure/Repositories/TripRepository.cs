@@ -33,5 +33,12 @@ namespace RastreamentoCargas.Infrastructure.Repositories
             return await GetFullQuery()
                 .FirstOrDefaultAsync(t => t.ExternalId == externalId && t.IsActive);
         }
+
+        public async Task<bool> UpdateAsync(Trip trip)
+        {
+            context.Trips.Update(trip);
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }
