@@ -46,7 +46,7 @@ namespace RastreamentoCargas.Application.DTOs.Trips
 
                 OriginLatitude = trip.OriginLatitude,
                 OriginLongitude = trip.OriginLongitude,
-                DestinationLatitude = trip.DestinationLongitude,
+                DestinationLatitude = trip.DestinationLatitude,
                 DestinationLongitude = trip.DestinationLongitude,
                 CurrentLatitude = trip.CurrentLatitude,
                 CurrentLongitude = trip.CurrentLongitude,
