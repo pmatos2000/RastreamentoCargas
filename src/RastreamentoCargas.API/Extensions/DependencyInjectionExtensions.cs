@@ -16,6 +16,7 @@ namespace RastreamentoCargas.API.Extensions
             services.AddScoped<IOperatorService, OperatorService>();
 
             services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IOperatorRepository, OperatorRepository>();
 
             services.AddValidatorsFromAssemblyContaining<CreateClientRequestDtoValidator>();
 
