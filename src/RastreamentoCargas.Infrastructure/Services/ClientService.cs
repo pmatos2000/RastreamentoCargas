@@ -50,7 +50,6 @@ namespace RastreamentoCargas.Infrastructure.Services
             return  (ClientResponseDto) client;
         }
 
-
         public async Task<bool> UpdateAsync(long id, UpdateClientRequestDto dto)
         {
             var client = await clientRepository.GetByIdAsync(id);
