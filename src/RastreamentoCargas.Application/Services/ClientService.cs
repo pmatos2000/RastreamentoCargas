@@ -1,12 +1,10 @@
 ﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using RastreamentoCargas.Application.DTOs.Clients;
 using RastreamentoCargas.Application.Interfaces;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
-using RastreamentoCargas.Infrastructure.Data;
 
-namespace RastreamentoCargas.Infrastructure.Services
+namespace RastreamentoCargas.Application.Services
 {
     public sealed class ClientService(
         IClientRepository clientRepository,

@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using RastreamentoCargas.Application.DTOs.Operators;
 using RastreamentoCargas.Application.Interfaces;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
-using RastreamentoCargas.Infrastructure.Data;
 
-namespace RastreamentoCargas.Infrastructure.Services
+namespace RastreamentoCargas.Application.Services
 {
-    public sealed class OperatorService(IOperatorRepository  operatorRepository, UserManager<User> userManager) : IOperatorService
+    public sealed class OperatorService(IOperatorRepository operatorRepository, UserManager<User> userManager) : IOperatorService
     {
         public async Task<IEnumerable<OperatorResponseDto>> GetAllAsync()
         {

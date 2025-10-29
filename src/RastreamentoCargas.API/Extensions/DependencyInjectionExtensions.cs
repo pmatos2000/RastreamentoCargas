@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using RastreamentoCargas.Application.Interfaces;
+using RastreamentoCargas.Application.Services;
 using RastreamentoCargas.Application.Validators.Client;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 using RastreamentoCargas.Infrastructure.Repositories;
