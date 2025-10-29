@@ -4,7 +4,7 @@ using RastreamentoCargas.Infrastructure.Data;
 
 namespace RastreamentoCargas.Infrastructure.Repositories
 {
-    internal class TripHistoryRepository(AppDbContext context) : ITripHistoryRepository
+    public class TripHistoryRepository(AppDbContext context) : ITripHistoryRepository
     {
         public async Task<TripHistory> CreateAsync(TripHistory historyEntry)
         {
