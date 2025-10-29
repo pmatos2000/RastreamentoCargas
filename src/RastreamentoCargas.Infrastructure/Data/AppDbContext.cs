@@ -25,6 +25,8 @@ namespace RastreamentoCargas.Infrastructure.Data
 
         public DbSet<Operator> Operators { get; set; } = null!;
         public DbSet<Client> Clients { get; set; } = null!;
+        public DbSet<Trip> Trips { get; set; } = null!;
+        public DbSet<TripHistory> TripHistories { get; set; } = null!;
 
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
