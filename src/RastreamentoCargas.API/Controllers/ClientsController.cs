@@ -51,7 +51,7 @@ namespace RastreamentoCargas.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetClient(long id)
         {
-            _logger.LogInformation(ex, "Tentativa de buscar o cliente com ID {ClientId}.", id);
+            _logger.LogInformation("Tentativa de buscar o cliente com ID {ClientId}.", id);
 
             try
             {
@@ -83,7 +83,7 @@ namespace RastreamentoCargas.API.Controllers
             {
                 var newClient = await _clientService.CreateAsync(dto);
                 _logger.LogInformation("Cliente {ClientId} criado com sucesso: {ClientName}", newClient.Id, newClient.Name);
-                return CreatedAtAction(nameof(GetCliente), new { id = newClient.Id }, newClient);
+                return CreatedAtAction(nameof(GetClient), new { id = newClient.Id }, newClient);
             }
             catch (ValidationException ex)
             {
@@ -153,5 +153,4 @@ namespace RastreamentoCargas.API.Controllers
             }
         }
     }
-}
 }
