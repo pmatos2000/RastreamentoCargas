@@ -6,7 +6,10 @@ using RastreamentoCargas.Domain.Interfaces.Repositories;
 
 namespace RastreamentoCargas.Application.Services
 {
-    public sealed class OperatorService(IOperatorRepository operatorRepository, UserManager<User> userManager) : IOperatorService
+    public sealed class OperatorService(
+        IOperatorRepository operatorRepository,
+        ITripRepository tripRepository,
+        UserManager<User> userManager) : IOperatorService
     {
         public async Task<IEnumerable<OperatorResponseDto>> GetAllAsync()
         {
@@ -59,6 +62,19 @@ namespace RastreamentoCargas.Application.Services
             operatorEntity.Department = dto.Department ?? operatorEntity.Department;
 
             return await operatorRepository.UpdateAsync(operatorEntity); ;
+        }
+
+        public async Task<bool> DeleteAsync(long id)
+        {
+            var operatorEntity = await operatorRepository.GetByIdAsync(id);
+            if (operatorEntity == null) return false;
+
+            // TODO: Criar regra para um operator não conseguir desativar um operador admin
+
+            if(await tripRepository.HasActiveTripsByOperatorIdAsync(id))
+                throw new InvalidOperationException("Não é possível desativar o operador. Existem cargas ativas (não entregues ou canceladas) associadas a ele.");
+            
+            return await operatorRepository.DeleteAsync(id);
         }
     }
 }

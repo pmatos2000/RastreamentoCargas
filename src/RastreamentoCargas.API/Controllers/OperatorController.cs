@@ -104,21 +104,38 @@ namespace RastreamentoCargas.API.Controllers
             }
         }
 
-        /*
-        // DELETE: api/operadores/{id}
+        /// <summary>
+        /// Remove (desativa) um operador do sistema.
+        /// </summary>
         [HttpDelete("{id}")]
-        [ProducesResponseType(204)] // 204 No Content
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteOperador(string id)
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(404)] 
+        [ProducesResponseType(400)] 
+        public async Task<IActionResult> DeleteOperador(long id) 
         {
-            var success = await _operatorService.DeleteAsync(id);
-            if (!success)
+            _logger.LogInformation("Tentativa de remover (desativar) operador com ID {OperatorId}.", id);
+            try
             {
-                return NotFound("Operador não encontrado.");
+                var success = await _operatorService.DeleteAsync(id);
+                if (!success)
+                {
+                    _logger.LogWarning("Falha ao remover: Operador com ID {OperatorId} não encontrado.", id);
+                    return NotFound("Operador não encontrado.");
+                }
+                _logger.LogInformation("Operador {OperatorId} removido (desativado) com sucesso.", id);
+                return NoContent();
             }
-            return NoContent();
+            catch (InvalidOperationException ex) 
+            {
+                _logger.LogWarning("Falha ao remover operador com ID {OperatorId}: {ErrorMessage}", id, ex.Message);
+                return BadRequest(ex.Message); 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao remover (desativar) operador com ID {OperatorId}.", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno ao remover o operador.");
+            }
         }
 
-        */
     }
 }

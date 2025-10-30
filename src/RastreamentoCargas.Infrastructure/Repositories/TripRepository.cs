@@ -53,5 +53,14 @@ namespace RastreamentoCargas.Infrastructure.Repositories
                                t.CurrentStatus != TripStatus.Canceled &&
                                t.IsActive);
         }
+
+        public async Task<bool> HasActiveTripsByOperatorIdAsync(long operatorId)
+        {
+            return await context.Trips
+                .AnyAsync(t => t.OperatorId == operatorId &&
+                               t.CurrentStatus != TripStatus.Delivered &&
+                               t.CurrentStatus != TripStatus.Canceled &&
+                               t.IsActive);
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace RastreamentoCargas.Application.Interfaces
         Task<OperatorResponseDto?> GetByIdAsync(long id);
         Task<OperatorResponseDto> CreateAsync(CreateOperatorRequestDto dto);
         Task<bool> UpdateAsync(long id, UpdateOperatorRequestDto dto);
+        Task<bool> DeleteAsync(long id);
     }
 }

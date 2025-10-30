@@ -9,7 +9,12 @@ namespace RastreamentoCargas.Infrastructure.Repositories
     {
         public async Task<bool> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            var operatorEntity = await GetByIdAsync(id);
+
+            if (operatorEntity is null) return false; 
+            
+            operatorEntity.IsActive = false;
+            return await UpdateAsync(operatorEntity);
         }
 
         public async Task<IEnumerable<Operator>> GetAllAsync()
