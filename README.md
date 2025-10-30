@@ -61,7 +61,7 @@ A forma mais simples de executar o projeto (API + Banco de Dados) é utilizando 
 
 1.  Clone o repositório:
     ```sh
-    git clone <url-do-seu-repositorio>
+    git clone https://github.com/pmatos2000/RastreamentoCargas
     cd rastreamentocargas
     ```
 
