@@ -5,7 +5,7 @@
 namespace RastreamentoCargas.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CorrigirIdentitySeed : Migration
+    public partial class CorrigirIdentitySeedDois : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

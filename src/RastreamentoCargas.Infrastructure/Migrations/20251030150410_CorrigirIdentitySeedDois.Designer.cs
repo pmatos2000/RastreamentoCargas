@@ -12,8 +12,8 @@ using RastreamentoCargas.Infrastructure.Data;
 namespace RastreamentoCargas.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251030150031_CorrigirIdentitySeed2")]
-    partial class CorrigirIdentitySeed2
+    [Migration("20251030150410_CorrigirIdentitySeedDois")]
+    partial class CorrigirIdentitySeedDois
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
