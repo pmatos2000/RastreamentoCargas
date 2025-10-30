@@ -205,8 +205,8 @@ namespace RastreamentoCargas.Application.Services
                 throw new InvalidOperationException($"Não é possível marcar como Entregue, pois a carga foi '{TripStatus.Canceled.GetFriendlyName()}'.");
             }
 
-            var confirmedLocation = trip.CurrentLocation;
-            var finalCoords = new CoordinatesDto(trip.CurrentLatitude, trip.CurrentLongitude);
+            var confirmedLocation = trip.DestinationLocation;
+            var finalCoords = new CoordinatesDto(trip.DestinationLatitude, trip.DestinationLongitude);
 
             if (!string.IsNullOrWhiteSpace(finalLocationDetails) && finalLocationDetails != trip.CurrentLocation)
             {
