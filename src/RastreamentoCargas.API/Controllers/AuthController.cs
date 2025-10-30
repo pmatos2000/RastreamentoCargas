@@ -14,15 +14,18 @@ namespace RastreamentoCargas.API.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IAuthenticationService _authService;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(
             SignInManager<User> signInManager,
             UserManager<User> userManager,
-            IAuthenticationService authService)
+            IAuthenticationService authService,
+            ILogger<AuthController> logger)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -30,10 +33,12 @@ namespace RastreamentoCargas.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
         {
+            _logger.LogInformation("Tentativa de login para o usuário: {UserName}", loginDto.UserName);
 
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
             if (user == null)
             {
+                _logger.LogWarning("Falha no login: Usuário {UserName} não encontrado.", loginDto.UserName);
                 return Unauthorized("Usuário ou senha inválidos.");
             }
 
@@ -44,10 +49,14 @@ namespace RastreamentoCargas.API.Controllers
 
             if (!result.Succeeded)
             {
+                _logger.LogWarning("Falha no login para o usuário {UserName}: Senha inválida.", loginDto.UserName);
                 return Unauthorized("Usuário ou senha inválidos.");
             }
 
             var tokenString =  await _authService.GenerateJwtToken(user);
+
+
+            _logger.LogInformation("Login bem-sucedido para o usuário {UserName}. Gerando token JWT.", loginDto.UserName);
             return Ok(new LoginResponseDto
             {
                 Token = tokenString,
