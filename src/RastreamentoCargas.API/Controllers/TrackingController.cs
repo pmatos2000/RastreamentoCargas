@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.DTOs.Trips;
 using RastreamentoCargas.Application.Interfaces;
+using RastreamentoCargas.Domain.Enums;
 using System.Security.Claims;
 
 namespace RastreamentoCargas.API.Controllers
@@ -193,6 +194,27 @@ namespace RastreamentoCargas.API.Controllers
 
             return Ok(history);
 
+        }
+
+        /// <summary>
+        /// Lista todas as cargas ativas com um status atual específico.
+        /// </summary>
+        /// <param name="status">O status desejado</param>
+        [HttpGet("status/{status}")]
+        [ProducesResponseType(typeof(IEnumerable<TripResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Para status inválido
+        public async Task<IActionResult> GetTripsByStatus(string status)
+        {
+            // Tenta converter a string do status para o Enum TripStatus
+            if (!Enum.TryParse<TripStatus>(status, true, out var tripStatus) || !Enum.IsDefined(typeof(TripStatus), tripStatus))
+            {
+                // Pega os nomes válidos do Enum para a mensagem de erro
+                var validStatuses = string.Join(", ", Enum.GetNames(typeof(TripStatus)));
+                return BadRequest($"Status inválido: '{status}'. Os status válidos são: {validStatuses}.");
+            }
+
+            var trips = await _tripService.GetByStatusAsync(tripStatus);
+            return Ok(trips);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using RastreamentoCargas.Domain.Entities;
+using RastreamentoCargas.Domain.Enums;
 
 namespace RastreamentoCargas.Domain.Interfaces.Repositories
 {
@@ -8,5 +9,6 @@ namespace RastreamentoCargas.Domain.Interfaces.Repositories
         Task<IEnumerable<Trip>> GetAllAsync();
         Task<Trip?> GetByExternalIdAsync(Guid externalId);
         Task<bool> UpdateAsync(Trip trip);
+        Task<IEnumerable<Trip>> GetByStatusAsync(TripStatus status);
     }
 }

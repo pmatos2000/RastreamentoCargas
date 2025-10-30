@@ -1,4 +1,5 @@
 ﻿using RastreamentoCargas.Application.DTOs.Trips;
+using RastreamentoCargas.Domain.Enums;
 
 namespace RastreamentoCargas.Application.Interfaces
 {
@@ -16,5 +17,7 @@ namespace RastreamentoCargas.Application.Interfaces
 
         Task<TripResponseDto> DeliverTripAsync(Guid trackingCode, string? finalLocationDetails);
         Task<bool> CancelAsync(Guid trackingCode);
+        Task<IEnumerable<TripResponseDto>> GetByStatusAsync(TripStatus status);
+
     }
 }

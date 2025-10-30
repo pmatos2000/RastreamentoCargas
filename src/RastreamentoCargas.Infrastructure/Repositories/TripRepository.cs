@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RastreamentoCargas.Domain.Entities;
-using RastreamentoCargas.Domain.Interfaces;
+using RastreamentoCargas.Domain.Enums;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 using RastreamentoCargas.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace RastreamentoCargas.Infrastructure.Repositories
 {
@@ -39,6 +36,13 @@ namespace RastreamentoCargas.Infrastructure.Repositories
             context.Trips.Update(trip);
             await context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<Trip>> GetByStatusAsync(TripStatus status)
+        {
+            return await GetFullQuery()
+                .Where(t => t.CurrentStatus == status && t.IsActive)
+                .ToListAsync();
         }
     }
 }

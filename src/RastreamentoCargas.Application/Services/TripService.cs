@@ -263,5 +263,11 @@ namespace RastreamentoCargas.Application.Services
 
             return true;
         }
+
+        public async Task<IEnumerable<TripResponseDto>> GetByStatusAsync(TripStatus status)
+        {
+            var trips = await tripRepository.GetByStatusAsync(status);
+            return trips.Select(trip => (TripResponseDto)trip);
+        }
     }
 }
