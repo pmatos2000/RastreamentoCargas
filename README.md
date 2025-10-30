@@ -103,5 +103,5 @@ O banco de dados é populado com usuários de teste (via Migrations) para facili
 1.  Acesse a documentação: `http://localhost:8080/swagger`
 2.  Use o endpoint `POST /api/autenticacao/login` com um dos usuários acima.
 3.  Copie o `token` JWT da resposta.
-4.  Clique no botão "Authorize" no topo do Swagger e cole o token no formato: `Bearer <seu-token-aqui>`.
+4.  Clique no botão "Authorize" no topo do Swagger e cole o token no formato: `<seu-token-aqui>`.
 5.  Agora você pode testar todos os endpoints protegidos!
