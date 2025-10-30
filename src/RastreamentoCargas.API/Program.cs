@@ -1,34 +1,60 @@
-using RastreamentoCargas.API.Extensions; 
-
+using RastreamentoCargas.API.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddDatabaseAndIdentity(builder.Configuration)
-    .AddJwtAuthentication(builder.Configuration)
-    .AddApplicationServices()
-    .AddSwaggerServices()
-    .AddControllers();
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration) 
+    .Enrich.FromLogContext()
+    .WriteTo.Console() 
+    .CreateBootstrapLogger(); 
 
-var app = builder.Build();
-
-
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Information("Iniciando a aplicação RastreamentoCargas.API");
 
-    app.ApplyPendingMigrations();
+    builder.Host.UseSerilog((context, services, configuration) => configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext());
+
+    builder.Services
+        .AddDatabaseAndIdentity(builder.Configuration)
+        .AddJwtAuthentication(builder.Configuration)
+        .AddApplicationServices()
+        .AddSwaggerServices()
+        .AddControllers();
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        app.ApplyPendingMigrations();
+    }
+    else
+    {
+        app.UseHttpsRedirection();
+        app.UseHsts();
+    }
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+
 }
-else
+catch (Exception ex)
 {
-    app.UseHttpsRedirection();
-    app.UseHsts();
+    Log.Fatal(ex, "Aplicação falhou ao iniciar.");
 }
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+finally
+{
+    Log.CloseAndFlush();
+}
