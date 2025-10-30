@@ -25,14 +25,22 @@ namespace RastreamentoCargas.API.Controllers
         /// (ADMIN) Adiciona uma ocorrência/movimentação manual para a carga.
         /// </summary>
         [HttpPost("{codigoCarga:guid}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)] 
         [ProducesResponseType(StatusCodes.Status403Forbidden)]   
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddManualHistoryEntry(Guid codigoCarga, [FromBody] RegisterOccurrenceDto dto)
+        public async Task<IActionResult> AddManualHistoryEntry(Guid codigoCarga, [FromBody] AddManualHistoryRequestDto dto)
         {
-            return StatusCode(StatusCodes.Status501NotImplemented, "Endpoint em construção");
+            try
+            {
+                await _tripHistoryService.AddManualHistoryAsync(codigoCarga, dto);
+                return NoContent();
+            }
+            catch
+            {
+                return NotFound($"Carga com código {codigoCarga} não encontrada.");
+            }
         }
 
         /// <summary>

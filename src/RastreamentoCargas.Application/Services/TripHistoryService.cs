@@ -8,7 +8,7 @@ using RastreamentoCargas.Domain.Interfaces.Repositories;
 
 namespace RastreamentoCargas.Application.Services
 {
-    public sealed class TripHistoryService(ITripHistoryRepository tripHistoryRepository) : ITripHistoryService
+    public sealed class TripHistoryService(ITripHistoryRepository tripHistoryRepository, ITripRepository tripRepository) : ITripHistoryService
     {
         public async Task RegisterOccurrenceAsync(RegisterOccurrenceDto dto)
         {
@@ -37,6 +37,23 @@ namespace RastreamentoCargas.Application.Services
 
             return PagedResponseDto<TripHistoryResponseDto>
                 .Create(pagedHistories, h => (TripHistoryResponseDto) h);
+        }
+
+        public async Task AddManualHistoryAsync(Guid trackingCode, AddManualHistoryRequestDto dto)
+        {
+            var trip = await tripRepository.GetByExternalIdAsync(trackingCode)
+                ?? throw new InvalidOperationException($"Carga com código {trackingCode} não encontrada.");
+
+            var occurrenceDto = new TripHistory
+            {
+                TripId = trip.Id,
+                OccurrenceStatus = dto.Status,
+                OccurrenceDateTime = dto.OccurrenceDateTime ?? DateTime.UtcNow,
+                LocationDetails = dto.LocationDetails,
+                Observation = dto.Observation,
+            };
+
+            await tripHistoryRepository.CreateAsync(occurrenceDto);
         }
     }
 }
