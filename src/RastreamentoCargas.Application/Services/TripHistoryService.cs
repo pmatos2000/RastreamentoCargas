@@ -1,6 +1,8 @@
-﻿using RastreamentoCargas.Application.DTOs.TripHistories;
+﻿using RastreamentoCargas.Application.DTOs.Common;
+using RastreamentoCargas.Application.DTOs.TripHistories;
 using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
 using RastreamentoCargas.Application.Interfaces;
+using RastreamentoCargas.Domain.Common;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 
@@ -29,5 +31,12 @@ namespace RastreamentoCargas.Application.Services
             return histories?.Select(h => (TripHistoryResponseDto) h);
         }
 
+        public async Task<PagedResponseDto<TripHistoryResponseDto>> GetAllAsync(SimplePaginationQuery query)
+        {
+            var pagedHistories = await tripHistoryRepository.GetAllAsync(query);
+
+            return PagedResponseDto<TripHistoryResponseDto>
+                .Create(pagedHistories, h => (TripHistoryResponseDto) h);
+        }
     }
 }

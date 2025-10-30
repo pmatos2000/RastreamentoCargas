@@ -1,6 +1,8 @@
-﻿using RastreamentoCargas.Application.DTOs.TripHistories;
+﻿using RastreamentoCargas.Application.DTOs.Common;
+using RastreamentoCargas.Application.DTOs.TripHistories;
 using RastreamentoCargas.Application.DTOs.TripHistoryRepositorys;
-using RastreamentoCargas.Domain.Entities;
+using RastreamentoCargas.Domain.Common;
+
 
 
 namespace RastreamentoCargas.Application.Interfaces
@@ -9,5 +11,6 @@ namespace RastreamentoCargas.Application.Interfaces
     {
         Task RegisterOccurrenceAsync(RegisterOccurrenceDto dto);
         Task<IEnumerable<TripHistoryResponseDto>?> GetByTripCodeAsync(Guid tripCode);
+        Task<PagedResponseDto<TripHistoryResponseDto>> GetAllAsync(SimplePaginationQuery query);
     }
 }

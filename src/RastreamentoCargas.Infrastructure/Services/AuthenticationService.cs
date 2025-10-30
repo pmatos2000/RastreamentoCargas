@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RastreamentoCargas.Application.Interfaces;
 using RastreamentoCargas.Domain.Entities;
@@ -8,9 +9,9 @@ using System.Text;
 
 namespace RastreamentoCargas.Infrastructure.Services
 {
-    public sealed class AuthenticationService(IConfiguration configuration) : IAuthenticationService
+    public sealed class AuthenticationService(IConfiguration configuration, UserManager<User> userManager) : IAuthenticationService
     {
-        public string GenerateJwtToken(User user)
+        public async Task<string> GenerateJwtToken(User user)
         {
             var jwtKey = configuration["Jwt:Key"];
             var jwtIssuer = configuration["Jwt:Issuer"];
@@ -32,6 +33,13 @@ namespace RastreamentoCargas.Infrastructure.Services
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.UserName ?? "")
             };
+
+            var userRoles = await userManager.GetRolesAsync(user);
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: jwtIssuer,

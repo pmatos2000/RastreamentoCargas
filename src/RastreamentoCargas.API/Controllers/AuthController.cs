@@ -47,7 +47,7 @@ namespace RastreamentoCargas.API.Controllers
                 return Unauthorized("Usuário ou senha inválidos.");
             }
 
-            var tokenString = _authService.GenerateJwtToken(user);
+            var tokenString =  await _authService.GenerateJwtToken(user);
             return Ok(new LoginResponseDto
             {
                 Token = tokenString,

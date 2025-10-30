@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RastreamentoCargas.Domain.Common;
 using RastreamentoCargas.Domain.Entities;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 using RastreamentoCargas.Infrastructure.Data;
@@ -12,6 +13,33 @@ namespace RastreamentoCargas.Infrastructure.Repositories
             context.TripHistories.Add(historyEntry);
             await context.SaveChangesAsync();
             return historyEntry;
+        }
+
+        public async Task<PagedList<TripHistory>> GetAllAsync(SimplePaginationQuery paginationQuery)
+        {
+            var totalCount = await context.TripHistories.CountAsync();
+
+            IQueryable<TripHistory> queryHistories = paginationQuery.SortAsc
+                ? context.TripHistories
+                    .AsNoTracking()
+                    .OrderBy(h => h.OccurrenceDateTime)
+                : context.TripHistories
+                    .AsNoTracking()
+                    .OrderByDescending(h => h.OccurrenceDateTime);
+            
+            queryHistories = queryHistories
+                .Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize)
+                .Take(paginationQuery.PageSize);
+
+            var historie = await queryHistories.ToListAsync();
+
+            return new PagedList<TripHistory>
+            {
+                Items = historie,
+                PageNumber = paginationQuery.PageNumber,
+                PageSize = paginationQuery.PageSize,
+                TotalCount = totalCount,
+            };
         }
 
         public async Task<IEnumerable<TripHistory>?> GetByTripCodeAsync(Guid tripCode)

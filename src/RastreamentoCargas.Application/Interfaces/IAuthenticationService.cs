@@ -4,6 +4,6 @@ namespace RastreamentoCargas.Application.Interfaces
 {
     public interface IAuthenticationService
     {
-        string GenerateJwtToken(User user);
+        Task<string> GenerateJwtToken(User user);
     }
 }
