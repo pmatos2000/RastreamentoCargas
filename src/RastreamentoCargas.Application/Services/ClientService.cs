@@ -8,6 +8,7 @@ namespace RastreamentoCargas.Application.Services
 {
     public sealed class ClientService(
         IClientRepository clientRepository,
+        ITripRepository tripRepository,
         IValidator<CreateClientRequestDto> validatorCreateClientRequestDto) : IClientService
     {
         public async Task<ClientResponseDto> CreateAsync(CreateClientRequestDto dto)
@@ -33,9 +34,19 @@ namespace RastreamentoCargas.Application.Services
 
         }
 
-        public Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            var client = await clientRepository.GetByIdAsync(id);
+            if (client is null) return false;
+
+
+            bool hasActiveTrips = await tripRepository.HasActiveTripsByClientIdAsync(id);
+            if (hasActiveTrips)
+            {
+                throw new InvalidOperationException("Não é possível desativar o cliente. Existem cargas ativas associadas a ele.");
+            }
+
+            return await clientRepository.DeleteAsync(id);
         }
 
         public async Task<IEnumerable<ClientResponseDto>> GetAllAsync()

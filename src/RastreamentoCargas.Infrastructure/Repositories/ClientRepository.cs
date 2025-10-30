@@ -21,9 +21,16 @@ namespace RastreamentoCargas.Infrastructure.Repositories
             return client;
         }
 
-        public Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            var client = await context.Clients .FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
+
+            if (client is null) return false;
+            
+            client.IsActive = false;
+            await context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<IEnumerable<Client>> GetAllAsync()

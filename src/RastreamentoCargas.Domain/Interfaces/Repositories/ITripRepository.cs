@@ -10,5 +10,6 @@ namespace RastreamentoCargas.Domain.Interfaces.Repositories
         Task<Trip?> GetByExternalIdAsync(Guid externalId);
         Task<bool> UpdateAsync(Trip trip);
         Task<IEnumerable<Trip>> GetByStatusAsync(TripStatus status);
+        Task<bool> HasActiveTripsByClientIdAsync(long clientId);
     }
 }
