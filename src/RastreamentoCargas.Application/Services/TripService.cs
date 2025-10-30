@@ -9,7 +9,7 @@ using RastreamentoCargas.Domain.Extensions;
 using RastreamentoCargas.Domain.Interfaces.Repositories;
 
 
-namespace RastreamentoCargas.Infrastructure.Services
+namespace RastreamentoCargas.Application.Services
 {
 
     public sealed class TripService(
