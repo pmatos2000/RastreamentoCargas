@@ -8,21 +8,32 @@ namespace RastreamentoCargas.API.Controllers
     [ApiController]
     [Route("api/operadores")] 
     [Authorize] 
-    public class OperadoresController : ControllerBase
+    public class OperatorController : ControllerBase
     {
         private readonly IOperatorService _operatorService;
+        private readonly ILogger<OperatorController> _logger;
 
-        public OperadoresController(IOperatorService operatorService)
+        public OperatorController(IOperatorService operatorService, ILogger<OperatorController> logger)
         {
             _operatorService = operatorService;
+            _logger = logger;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<OperatorResponseDto>), 200)]
         public async Task<IActionResult> GetOperators()
         {
-            var operadores = await _operatorService.GetAllAsync();
-            return Ok(operadores);
+            _logger.LogInformation("Tentativa de buscar todos os operadores.");
+            try
+            {
+                var operadores = await _operatorService.GetAllAsync();
+                return Ok(operadores);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar todos os operadores.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno ao processar a solicitação.");
+            }
         }
 
         [HttpGet("{id}")]
@@ -30,12 +41,23 @@ namespace RastreamentoCargas.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetOperator(long id)
         {
-            var operador = await _operatorService.GetByIdAsync(id);
-            if (operador == null)
+            _logger.LogInformation("Tentativa de buscar o operador com ID {OperatorId}.", id);
+
+            try
             {
-                return NotFound("Operador não encontrado.");
+                var operador = await _operatorService.GetByIdAsync(id);
+                if (operador == null)
+                {
+                    _logger.LogWarning("Operador com ID {OperatorId} não encontrado.", id);
+                    return NotFound("Operador não encontrado.");
+                }
+                return Ok(operador);
             }
-            return Ok(operador);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar operador com ID {OperatorId}.", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno ao processar a solicitação.");
+            }
         }
 
         [HttpPost]
@@ -43,29 +65,43 @@ namespace RastreamentoCargas.API.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> CreateOperador([FromBody] CreateOperatorRequestDto dto)
         {
+            _logger.LogInformation("Tentativa de criar novo operador: {UserName}", dto.UserName);
             try
             {
-                var novoOperator = await _operatorService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetOperator), new { id = novoOperator.Id }, novoOperator);
+                var newOperator = await _operatorService.CreateAsync(dto);
+                _logger.LogInformation("Operador {OperatorId} criado com sucesso: {UserName}", newOperator.Id, newOperator.UserName);
+                return CreatedAtAction(nameof(GetOperator), new { id = newOperator.Id }, newOperator);
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
+                _logger.LogWarning(ex, "Falha ao criar operador {UserName}.", dto.UserName);
                 return BadRequest(ex.Message);
             }
         }
 
-        
+
         [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateOperador(long id, [FromBody] UpdateOperatorRequestDto dto)
         {
-            var success = await _operatorService.UpdateAsync(id, dto);
-            if (!success)
+            _logger.LogInformation("Tentativa de atualizar operador com ID {OperatorId}.", id);
+            try
             {
-                return NotFound("Operador não encontrado.");
+                var success = await _operatorService.UpdateAsync(id, dto);
+                if (!success)
+                {
+                    _logger.LogWarning("Falha ao atualizar: Operador com ID {OperatorId} não encontrado.", id);
+                    return NotFound("Operador não encontrado.");
+                }
+                _logger.LogInformation("Operador {OperatorId} atualizado com sucesso.", id);
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar operador com ID {OperatorId}.", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno ao atualizar o operador.");
+            }
         }
 
         /*
